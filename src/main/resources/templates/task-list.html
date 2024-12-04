@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<div>
+    <div>
+        <div>
+            <h2>Your Tasks</h2>
+
+            <form method="get" th:action="@{/tasks}">
+                <input type="text" name="searchQuery" th:value="${searchQuery}" placeholder="Search by title or description" />
+                <button type="submit">Search</button>
+            </form>
+
+            <!-- Filter and Sort -->
+            <div>
+                <form method="get" th:action="@{/tasks}">
+                    <div>
+                        <label for="category">Category:</label>
+                        <select id="category" name="category" th:value="${category}">
+                            <option value="">All</option>
+                            <option value="1">Work</option>
+                            <option value="2">Personal</option>
+                            <option value="3">Urgent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="status">Status:</label>
+                        <select id="status" name="status" th:value="${status}">
+                            <option value="">All</option>
+                            <option value="Not completed">Not completed</option>
+                            <option value="In progress">In progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sortOrder">Sort by Due Date:</label>
+                        <select id="sortOrder" name="sortOrder" th:value="${sortOrder}">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+                    <button type="submit">Filter</button>
+                </form>
+            </div>
+
+            <!-- Task List Table -->
+            <table>
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Priority</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="task : ${tasks}">
+                    <td th:text="${task.title}"></td>
+                    <td th:text="${task.category.categoryName}"></td>
+                    <td th:text="${task.status}"></td>
+                    <td th:text="${task.dueDate}"></td>
+                    <td th:text="${task.priority}"></td>
+                    <td>
+                        <a th:href="@{/tasks/edit/{taskId}(taskId=${task.taskId})}">Edit</a>
+                        <a th:href="@{/tasks/delete/{taskId}(taskId=${task.taskId})}">Delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <!-- Pagination -->
+                <div>
+                    <ul>
+                        <!-- Pagination pages -->
+                        <li th:each="i : ${#numbers.sequence(0, lastPage)}">
+                            <a th:href="@{/tasks(page=${i}, searchQuery=${searchQuery}, sortOrder=${sortOrder})}"
+                               th:text="${i + 1}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <a th:href="@{/tasks/create}">Add New Task</a>
+
+            <!-- Logout Button -->
+            <form method="post" th:action="@{/logout}">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
